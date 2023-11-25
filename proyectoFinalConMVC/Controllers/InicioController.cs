@@ -23,7 +23,7 @@ namespace proyectoFinalConMVC.Controllers
             string repuesta = ConexionDeBaseDeDatos.Login(correo, password);
             if (repuesta.Equals("Login"))
             {
-
+                return RedirectToAction("Index","Home");
             }
             else
             {
@@ -47,6 +47,7 @@ namespace proyectoFinalConMVC.Controllers
             {
                 usuario.password = EncriptarDesencriptarClave.encriptar(usuario.password);
                 ConexionDeBaseDeDatos.Registrar(usuario.correo, usuario.password);
+                return RedirectToAction("Index", "Home");
             }
             return View();
         }
