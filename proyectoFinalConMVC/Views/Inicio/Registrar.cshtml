@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="@Url.Content("~/content/css/index.css")">
+    <link rel="stylesheet" href="@Url.Content("~/content/css/normalize.css")">
+</head>
+<body>
+    <div class="fondo-main">
+
+        
+    </div>
+    <div class="formulario">
+        <div>
+            <h1>Registrate</h1>
+            <p>Por favor llenar todos los campos</p>
+        </div>
+        @if (ViewBag.Mensaje != null)
+        {
+            <p>@ViewBag.Mensaje</p>
+
+
+        }
+        <form method="POST" action="@Url.Action("Registrar","Inicio")" class="elemento-formulario">
+
+            <div>
+                <input type="email" name="correo" placeholder="correo" required />
+            </div>
+            <div>
+                <input type="password" name="password" placeholder="Contraseña" required />
+            </div>
+            <div>
+                <input type="submit" value="Registrate" />
+            </div>
+
+        </form>
+
+        <div>
+
+
+            <p>¿Tienes cuenta?<a href="@Url.Action("Login","Inicio")">Inicia sesión aquí</a></p>
+
+        </div>
+    </div>
+</body>
+</html>
