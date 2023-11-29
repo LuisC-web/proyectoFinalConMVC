@@ -21,6 +21,7 @@ namespace proyectoFinalConMVC.Controllers
 
         {
             string repuesta = ConexionDeBaseDeDatos.Login(correo, password);
+            ViewBag.Mensaje = repuesta;
             if (repuesta.Equals("Login"))
             {
                 return RedirectToAction("Index","Home");
@@ -35,20 +36,23 @@ namespace proyectoFinalConMVC.Controllers
         {
             return View();
         }
-        public ActionResult Registro(Usuario usuario)
+        [HttpPost]
+        public ActionResult Registrar(string correo, string password)
 
         {
-            string repuesta = ConexionDeBaseDeDatos.Login(usuario.correo, usuario.password);
+            string repuesta = ConexionDeBaseDeDatos.Login(correo, password);
+            ViewBag.Mensaje = repuesta;
             if (repuesta.Equals("Login"))
             {
                 ViewBag.Mensaje = "Usuario ya existe";
             }
-            if(repuesta.Equals("No existe usuario"))
+            if(repuesta.Equals("usuario no existe"))
             {
-                usuario.password = EncriptarDesencriptarClave.encriptar(usuario.password);
-                ConexionDeBaseDeDatos.Registrar(usuario.correo, usuario.password);
+                password = EncriptarDesencriptarClave.encriptar(password);
+                ConexionDeBaseDeDatos.Registrar(correo, password);
                 return RedirectToAction("Index", "Home");
             }
+            
             return View();
         }
     }

@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Org.BouncyCastle.Crypto.Generators;
 using proyectoFinalConMVC.servicios;
+using Org.BouncyCastle.Asn1.X500;
 
 namespace proyectoFinalConMVC.Data
 {
@@ -42,7 +43,7 @@ namespace proyectoFinalConMVC.Data
 
 
         }
-        public static string Login(string correo, string password)
+        public  static string Login(string correo, string password)
         {
 
 
@@ -50,33 +51,42 @@ namespace proyectoFinalConMVC.Data
             {
                 using (MySqlConnection con = new MySqlConnection(cadenaMySql))
                 {
-                    string queryCorreo = "SELECT correo FROM usuario where correo=@correo", queryPassword = "SELECT password FROM usuario where correo=@correo";
                     con.Open();
+                    string queryCorreo = "SELECT * FROM usuario WHERE correo=@correo", queryPassword = "SELECT password FROM usuario";
+                   queryPassword += " where correo = @correo";
+                    
                     MySqlCommand solictudCorreo = new MySqlCommand(queryCorreo, con), solictudPassword = new MySqlCommand(queryPassword, con);
-                    solictudCorreo.Parameters.Add("@correo", MySqlDbType.VarChar).Value = correo;
-                    solictudCorreo.ExecuteNonQuery();
-                    if (Convert.ToString(solictudCorreo.Parameters["correo"].Value).Equals(""))
+                    solictudCorreo.Parameters.AddWithValue("@correo",correo);
+                   
+                    using (MySqlDataReader resultadoQuery = solictudCorreo.ExecuteReader())
                     {
-                        con.Close();
-                        return "No existe usuario";
-                    }
-                    else
-                    {
-                        solictudPassword.Parameters.Add("@correo", MySqlDbType.VarChar).Value = correo;
-
-                        solictudPassword.ExecuteNonQuery();
-                        if (EncriptarDesencriptarClave.descrinptar(password, Convert.ToString(solictudPassword.Parameters["password"].Value)))
+                        if (resultadoQuery.HasRows)
                         {
-                            con.Close();
-                            return "Login";
+                            return "Usuario existe";
                         }
                         else
                         {
-                            con.Close();
-                            return "Constraseña incorrecta";
+                            return "usuario no existe" ;
+
                         }
 
                     }
+
+                 
+             
+
+
+                    /*    if(Convert.ToString(solictudCorreo.ExecuteScalar()) == "")
+                          {
+                              return "No existe el usuario";
+                          }
+                          solictudPassword.Parameters.Add("@correo", MySqlDbType.VarChar).Value = correo;
+                          solictudPassword.ExecuteNonQuery();
+                          if ( EncriptarDesencriptarClave.descrinptar(password, Convert.ToString(solictudPassword.ExecuteScalar()))){
+                              return "usuario verifado";
+                          }
+                          else { return "contraseña incorrecta"; }
+                         */
                 }
 
 
