@@ -1,0 +1,101 @@
+#include <ESP8266WebServer.h>
+#include "ESP8266WiFi.h"
+#include <DHT.h>
+
+
+#define DHTTYPE DHT11
+#define DHTPIN 2
+const char* ssid = "luis"; //Ingresar SSID
+const char* password = "12345678"; //Ingresar Password
+ESP8266WebServer server(80);
+int pin1M=16;
+int pin2M=5;
+int pin3M=4;
+int pin4M=0;
+
+bool adelante=false;
+DHT dht(DHTPIN, DHTTYPE);
+void setup(void)
+{ 
+ pinMode(pin1M, OUTPUT);  // Puedes cambiar LED_BUILTIN al número del primer pin que desees controlar
+  pinMode(pin2M, OUTPUT); 
+  pinMode(pin3M, OUTPUT);  // Puedes cambiar LED_BUILTIN al número del primer pin que desees controlar
+  pinMode(pin4M, OUTPUT); 
+  Serial.begin(9600);
+   dht.begin();
+
+  // Coneccción a WiFi
+  WiFi.begin(ssid, password);
+ 
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+     delay(500);
+     Serial.print("Conectando wifi...\n");
+  }
+    // Configura los pines de control como salida
+
+ server.on("/", HTTP_GET, [](){
+  digitalWrite(pin1M,LOW);
+ digitalWrite(pin2M,LOW);
+  digitalWrite(pin3M,LOW);
+ digitalWrite(pin4M,LOW);
+    server.send(200, "text/html", "Holis");
+  });
+   // Configura el pin de control como salida
+
+ server.on("/adelante", HTTP_GET, [](){
+ digitalWrite(pin1M,HIGH);
+ digitalWrite(pin2M,HIGH);
+  digitalWrite(pin3M,LOW);
+ digitalWrite(pin4M,LOW);
+    server.send(200, "text/html", "Moviendo Hacia adelante");
+  });
+ server.on("/atras", HTTP_GET, [](){
+ digitalWrite(pin1M,LOW);
+ digitalWrite(pin2M,LOW);
+  digitalWrite(pin3M,HIGH);
+ digitalWrite(pin4M,HIGH);
+    server.send(200, "text/html", "Moviendo Hacia atras");
+  });
+  server.on("/derecha", HTTP_GET, [](){
+ digitalWrite(pin1M,LOW);
+ digitalWrite(pin2M,HIGH);
+  digitalWrite(pin3M,LOW);
+ digitalWrite(pin4M,LOW);
+    server.send(200, "text/html", "Moviendo Hacia arriba");
+  });
+  server.on("/izquierda", HTTP_GET, [](){
+ digitalWrite(pin1M,HIGH);
+ digitalWrite(pin2M,LOW);
+  digitalWrite(pin3M,LOW);
+ digitalWrite(pin4M,LOW);
+    server.send(200, "text/html", "Moviendo Hacia arriba");
+  });
+   server.on("/sensorTemp", HTTP_GET, [](){
+  float temperatura = dht.readTemperature();
+
+    server.send(200, "text/html", String(temperatura));
+  });
+  // Inicia el servidor web
+  server.begin();
+  Serial.println("Servidor iniciado");
+    Serial.println("Conexión WiFi establecida");
+  Serial.print("Dirección IP: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() 
+{
+    // Maneja las solicitudes del servidor web
+
+   server.handleClient();
+
+  // Envía datos al Arduino a través de la comunicación serial
+ 
+
+  // Espera a recibir datos del Arduino
+ 
+  
+  delay(2000);
+
+}
